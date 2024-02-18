@@ -1,0 +1,104 @@
+﻿@model IndexViewModel;
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+
+@foreach (var item in Model.ContentList)
+{
+    <article class="" id="@item.Slug">
+        <header>
+            <h1 class="display-5"><a href="@item.Slug" class="post-title-link">@item.Title</a></h1>
+            <div class="publish-date">@item.PublishDate.ToLongDateString()</div>
+            @if (item.Authors.AuthorList.Any())
+            {
+                <ul class="author-list list-inline">
+                    <li class="list-inline-item">By</li>
+                    @foreach (var author in item.Authors.AuthorList)
+                    {
+                        <li class="author-name list-inline-item">@author.DisplayName</li>
+                    }
+                </ul>
+            }
+
+            @if (item.Tags.Any())
+            {
+                <ul class="tags-list list-inline">
+                    <li class="list-inline-item">Tags:</li>
+                    @foreach (var tag in item.Tags)
+                    {
+                        <li class="list-inline-item">@tag</li>
+                    }
+                </ul>
+            }
+        </header>
+        <section class="article-body">
+            <partial name="_photo" model=@item>
+            <partial name="_comic" model=@item>
+            @Html.Raw(item.Extract != null ? item.Extract : item.Content)
+        </section>
+
+        <footer>
+            @if (!string.IsNullOrWhiteSpace(item.Summary))
+            {
+                <p>
+                    <a href="@item.Slug">Read Full Post</a>
+                </p>
+            }
+            <p>
+                <a href="@($"{Model.MetaData.SiteBaseUrl}/{item.Slug}")">Link</a>
+            </p>
+        </footer>
+    </article>
+}
+
+<footer id="paging-footer">
+    <nav>
+        <form method="get" id="paging-form">
+            <div class="row g-3">
+                <div class="col-auto">
+                    <label for="current-page" class="form-label">Page (@Model.PageCount total pages)</label>
+                    <input type="number" value="@Model.CurrentPage" id="current-page" name="page" class="form-control"
+                           onchange="this.form.submit()" />
+                </div>
+                <div class="col-auto">
+                    <label for="PostsPerPage" class="form-label">Posts Per Page</label>
+                    <select asp-for="PostsPerPage" asp-items="Model.PostsPerPageList" class="form-select"
+                            onchange="this.form.submit()"></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-auto">
+                    <button id="previous-page-button" class="btn btn-success">Previous</button>
+                    <button id="next-page-button" class="btn btn-success">Next</button>
+                </div>
+            </div>
+        </form>
+
+        <script>
+            var pageElement = document.getElementById("current-page");
+            var pageNumber = parseInt(pageElement.value);
+
+            var nextButton = document.getElementById("next-page-button");
+            var previousButton = document.getElementById("previous-page-button");
+
+            nextButton.addEventListener("click", function () {
+                pageNumber += 1;
+                pageElement.value = pageNumber;
+                document.getElementById("paging-form").submit();
+            });
+
+            previousButton.addEventListener("click", function () {
+                pageNumber -= 1;
+                pageElement.value = pageNumber;
+                document.getElementById("paging-form").submit();
+            });
+
+        </script>
+    </nav>
+</footer>
+
+@section Scripts
+{
+}

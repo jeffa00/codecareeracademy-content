@@ -1,0 +1,8 @@
+﻿@model ApplicationCore.Entities.ContentItem 
+
+@if(!string.IsNullOrEmpty(Model.Comic))
+{
+<figure class="comicfigure">
+    <img class="comic" alt="@Model.ComicText" src="/images/comics/@Model.Comic">
+</figure>
+}

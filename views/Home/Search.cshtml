@@ -1,0 +1,94 @@
+﻿@model SearchResultsViewModel;
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<h2 class="display-2">@Model.ContentCount results for <small class="text-muted">@Model.SearchTerm</small></h2>
+
+@foreach (var item in Model.ContentList)
+{
+    <article class="" id="@item.Slug">
+        <header>
+            <h1 class="display-5"><a href="/@item.Slug" class="post-title-link">@item.Title</a></h1>
+            <p>@item.PublishDate.ToLongDateString()</p>
+            @if (item.Authors.AuthorList.Any())
+            {
+                <p>By</p>
+                <ul class="author-list">
+                    @foreach (var author in item.Authors.AuthorList)
+                    {
+                        <li class="author-name">@author.DisplayName</li>
+                    }
+                </ul>
+            }
+            @if (item.Tags.Any())
+            {
+                <ul class="tags-list">
+                    @foreach (var tag in item.Tags)
+                    {
+                        <li>@tag</li>
+                    }
+                </ul>
+            }
+        </header>
+        <section class="article-body">
+
+            @Html.Raw(item.Summary != null ? item.Summary : item.Content)
+        </section>
+
+        @if (!string.IsNullOrWhiteSpace(item.Summary))
+        {
+            <footer>
+                <a href="/@item.Slug">Read Full Post</a>
+            </footer>
+        }
+    </article>
+}
+
+<footer id="paging-footer">
+    <nav>
+        <form method="post" id="paging-form" action="/search/">
+            <input type="hidden" id="search-term" name="SearchTerm" value="@Model.SearchTerm">
+            <div class="row g-3">
+                <div class="col-auto">
+                    <label for="current-page" class="form-label">Page (@Model.PageCount total pages)</label>
+                    <input type="number" value="@Model.CurrentPage" id="current-page" name="page" class="form-control"
+                        onchange="this.form.submit()" />
+                </div>
+                <div class="col-auto">
+                    <label for="PostsPerPage" class="form-label">Posts Per Page</label>
+                    <select asp-for="PostsPerPage" asp-items="Model.PostsPerPageList" class="form-select"
+                        onchange="this.form.submit()"></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-auto">
+                    <button id="previous-page-button" class="btn btn-success">Previous</button>
+                    <button id="next-page-button" class="btn btn-success">Next</button>
+                </div>
+            </div>
+        </form>
+
+        <script>
+            var pageElement = document.getElementById("current-page");
+            var pageNumber = parseInt(pageElement.value);
+
+            var nextButton = document.getElementById("next-page-button");
+            var previousButton = document.getElementById("previous-page-button");
+
+            nextButton.addEventListener("click", function () {
+                pageNumber += 1;
+                pageElement.value = pageNumber;
+                document.getElementById("paging-form").submit();
+            });
+
+            previousButton.addEventListener("click", function () {
+                pageNumber -= 1;
+                pageElement.value = pageNumber;
+                document.getElementById("paging-form").submit();
+            });
+
+        </script>
+    </nav>
+</footer>

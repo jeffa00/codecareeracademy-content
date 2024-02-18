@@ -1,0 +1,10 @@
+﻿@model ApplicationCore.Entities.ContentItem 
+
+@if(!string.IsNullOrEmpty(Model.Photo))
+{
+
+    <figure class="photofigure">
+        <img src="@Model.Photo" alt="@Model.PhotoText">
+        <figcaption>@Model.PhotoText</figcaption>
+    </figure>
+}

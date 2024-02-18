@@ -1,0 +1,41 @@
+{
+  "Serilog": {
+    "Using":  ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": "Information",
+    "Override": {
+      "Microsoft.AspNetCore": "Warning"
+    },
+    "WriteTo": [
+      {
+        "Name": "Console"
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "/var/log/codecareeracademy/codecareeracademy-.log",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": "31",
+          "buffered": "true"
+        },
+        "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ],
+        "Properties": {
+          "Application":  "Code Career Academy"
+        }
+      }
+    ]
+  },
+  "Content": {
+    "SiteTitle": "Code Career Academy",
+    "SiteSubTitle": "Where Has It Gone?",
+    "SiteBaseUrl":  "https://codecareeracademy.com",
+    "SiteLogoUrl": "",
+    "DefaultAuthor": {
+      "DisplayName": "Jeff Ammons",
+      "FirstName": "Jeff",
+      "LastName": "Ammons",
+      "Email": "jeffa@codecareeracademy.com",
+      "Url": "https://codecareeracademy.com"
+    }
+  },
+  "AllowedHosts": "*"
+}

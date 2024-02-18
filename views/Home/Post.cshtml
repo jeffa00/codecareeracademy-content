@@ -1,0 +1,85 @@
+﻿@model ReaderWebUI.Models.PostViewModel
+
+@{
+    ViewData["Title"] = Model.Content.Title;
+}
+@section openGraph {
+    @if(!string.IsNullOrEmpty(Model.Content.Comic) || !string.IsNullOrEmpty(Model.Content.Photo))
+    {
+    <meta property="og:type" content="photo">
+    }
+    else
+    {
+    <meta property="og:type" content="article">
+    }
+    <meta property="og:title" content="@Model.Content.Title">
+    <meta property="og:url" content="@Model.MetaData.SiteBaseUrl/@Model.Content.Slug">
+    <meta property="og:description" content="@Model.Content.GetTwitterDescription()">
+    @if(!string.IsNullOrEmpty(Model.Content.Comic))
+    {
+    <meta name="og:image" content="@Model.MetaData.SiteBaseUrl@Model.Content.GetTwitterImage("")">
+    }
+
+    @if(!string.IsNullOrEmpty(Model.Content.Photo))
+    {
+    <meta name="og:image" content="@Model.MetaData.SiteBaseUrl@Model.Content.GetTwitterImage("0.25x")">
+    }
+
+    <meta property="og:tag" content="@Model.Content.GetTagsCommaDelimited()">
+    <meta property="og:published_time" content="@Model.Content.PublishDate">
+    <meta property="og:author" content="@Model.Content.GetAuthorsCommaDelimited()">
+}
+
+@section twitterCard {
+
+    <meta name="twitter:card" content="@Model.Content.GetTwitterCardType()">
+    <meta name="twitter:title" content="@Model.Content.Title">
+    <meta name="twitter:creator" content="@@YourName">
+    <meta name="twitter:description" content="@Model.Content.GetTwitterDescription()">
+
+    @if(!string.IsNullOrEmpty(Model.Content.Comic))
+    {
+    <meta name="twitter:image" content="@Model.MetaData.SiteBaseUrl@Model.Content.GetTwitterImage("")">
+    }
+
+    @if(!string.IsNullOrEmpty(Model.Content.Photo))
+    {
+    <meta name="twitter:image" content="@Model.MetaData.SiteBaseUrl@Model.Content.GetTwitterImage("0.25x")">
+    }
+}
+
+<article class="" id="@Model.Content.Slug">
+    <header>
+        <h1 class="display-5">@Model.Content.Title</h1>
+        <div class="publish-date">@Model.Content.PublishDate.ToLongDateString()</div>
+        @if (@Model.Content.Authors.AuthorList.Any())
+        {
+            <ul class="author-list list-inline">
+                <li class="list-inline-item">By</li>
+                @foreach (var author in @Model.Content.Authors.AuthorList)
+                {
+                    <li class="author-name list-inline-item">@author.DisplayName</li>
+                }
+            </ul>
+        }
+        @if (@Model.Content.Tags.Any())
+        {
+            <ul class="tags-list list-inline">
+                <li class="list-inline-item">Tags:</li>
+                @foreach (var tag in @Model.Content.Tags)
+                {
+                    <li class="list-inline-item">@tag</li>
+                }
+            </ul>
+        }
+    </header>
+    <section class="article-body">
+        <partial name="_photo" model=@Model.Content>
+        <partial name="_comic" model=@Model.Content>
+        @Html.Raw(@Model.Content.Content)
+    </section>
+    <footer class="article-footer">
+
+    </footer>
+
+</article>
